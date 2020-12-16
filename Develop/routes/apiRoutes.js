@@ -47,7 +47,7 @@ module.exports = function(app) {
 
   app.post("/api/notes", function(req, res) {
     id.current_id++; //get a new id
-    req.body.id = id; //add the id to the request as an attribute
+    req.body.id = id.current_id; //add the id to the request as an attribute
     console.log(req.body);
     db.push(req.body);
     fs.writeFile(path.join(__dirname, '../db/db.json'), JSON.stringify(db), 'utf8', (err) => {
@@ -62,6 +62,7 @@ module.exports = function(app) {
   app.delete("/api/notes/:id", function(req, res) {
     console.log("delete pressed");
     let filtereddb = db.filter(note => note.id != req.params.id);
+    console.log(req.params.id);
     //console.log(db);
     fs.writeFile(path.join(__dirname, '../db/db.json'), JSON.stringify(filtereddb), 'utf8', (err) => {
       if (err) throw err;
@@ -69,5 +70,4 @@ module.exports = function(app) {
     });
     res.filtereddb;
   });
-
 }
