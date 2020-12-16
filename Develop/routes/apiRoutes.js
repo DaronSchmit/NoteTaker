@@ -4,7 +4,7 @@
 // These data sources hold arrays of information on table-data, waitinglist, etc.
 // ===============================================================================
 
-const db = require("../db/db.json");
+let db = require("../db/db.json");
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
@@ -50,7 +50,8 @@ module.exports = function(app) {
     req.body.id = id.current_id; //add the id to the request as an attribute
     console.log(req.body);
     db.push(req.body);
-    fs.writeFile(path.join(__dirname, '../db/db.json'), JSON.stringify(db), 'utf8', (err) => {
+    db[0].current_id++
+    fs.appendFile(path.join(__dirname, '../db/db.json'), JSON.stringify(db), 'utf8', (err) => {
       if (err) throw err;
       else console.log("file written successfully");
     });
@@ -62,13 +63,14 @@ module.exports = function(app) {
 
   app.delete("/api/notes/:id", function(req, res) {
     console.log("delete pressed");
-    let filtereddb = db.filter(note => note.id != req.params.id);
+    db = db.filter(note => note.id != req.params.id);
     console.log(req.params.id);
     //console.log(db);
-    fs.writeFile(path.join(__dirname, '../db/db.json'), JSON.stringify(filtereddb), 'utf8', (err) => {
+    fs.writeFile(path.join(__dirname, '../db/db.json'), JSON.stringify(db), 'utf8', (err) => {
       if (err) throw err;
-      else console.log("file written successfully");
+      else console.log("file updated successfully");
     });
+    console.log(db);
     res.json(db.slice(1));
   });
 }
